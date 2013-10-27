@@ -6,6 +6,11 @@ public class Message
 {
 
 	/**
+	 * 消息透长度
+	 */
+	public static final int HEAD_LEN = 10;
+
+	/**
 	 * 时间戳
 	 * 
 	 * 客户端请求时，时间戳为当前系统时间
@@ -169,6 +174,16 @@ public class Message
 	}
 
 	/**
+	 * 获取数据长度
+	 * 
+	 * @return
+	 */
+	public int getReceivedDataLength()
+	{
+		return null == data ? 0 : data.length;
+	}
+
+	/**
 	 * 设置请求的数据(非http请求)
 	 * 
 	 * 数据前10个字节设置规则为：
@@ -186,22 +201,22 @@ public class Message
 	 * @param timestamp
 	 *            请求时间戳
 	 */
-	public void setData(short len, long timestamp, byte[] data)
+	public void setSendData(byte[] data)
 	{
-		this.timestamp = timestamp;
-		this.data = new byte[len + 2];
+		this.timestamp = System.currentTimeMillis();
+		this.data = new byte[data.length + HEAD_LEN];
 		ByteBuffer buffer = ByteBuffer.wrap(this.data);
-		buffer.putShort(len);
+		buffer.putShort((short) (data.length - 2));
 		buffer.putLong(this.timestamp);
 		buffer.put(data);
 	}
 
 	/**
-	 * 设置数据
+	 * 设置接收到的数据
 	 * 
 	 * @param data
 	 */
-	public void setData(byte[] data)
+	public void setReceivedData(byte[] data)
 	{
 		this.data = data;
 	}
@@ -244,15 +259,5 @@ public class Message
 	protected long getTimestamp()
 	{
 		return timestamp;
-	}
-
-	/**
-	 * 消息最小长度
-	 * 
-	 * @return
-	 */
-	protected static int minLength()
-	{
-		return 2 + 8;
 	}
 }

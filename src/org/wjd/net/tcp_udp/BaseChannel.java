@@ -372,7 +372,7 @@ public abstract class BaseChannel extends Handler
 	 */
 	protected void parseMessage(byte[] src)
 	{
-		if (null == src || src.length <= Message.minLength())
+		if (null == src || src.length <= Message.HEAD_LEN)
 		{
 			return;
 		}
@@ -390,10 +390,14 @@ public abstract class BaseChannel extends Handler
 			if (null != pushHandler)
 			{
 				Message message = new Message(pushHandler, null);
-				byte[] data = new byte[src.length - Message.minLength()];
-				buffer.get(data, 0, data.length);
+				int busiLen = src.length - Message.HEAD_LEN;
 				message.setTimestamp(timestamp);
-				message.setData(data);
+				if (busiLen > 0)
+				{
+					byte[] data = new byte[busiLen];
+					buffer.get(data, 0, busiLen);
+					message.setReceivedData(data);
+				}
 				obtainMessage(RESPONSE_HANDLE, message).sendToTarget();
 			}
 		} else
@@ -402,9 +406,13 @@ public abstract class BaseChannel extends Handler
 			Message message = responseMatch(timestamp);
 			if (null != message && !message.isCancelled())
 			{
-				byte[] data = new byte[src.length - Message.minLength()];
-				buffer.get(data, 0, data.length);
-				message.setData(data);
+				int busiLen = src.length - Message.HEAD_LEN;
+				if (busiLen > 0)
+				{
+					byte[] data = new byte[busiLen];
+					buffer.get(data, 0, busiLen);
+					message.setReceivedData(data);
+				}
 				obtainMessage(RESPONSE_HANDLE, message).sendToTarget();
 			}
 		}

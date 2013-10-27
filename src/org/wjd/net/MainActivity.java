@@ -74,8 +74,7 @@ public class MainActivity extends Activity implements NetErrorHandler,
 		}
 		Message message = new Message(this, this, "127.0.0.1", 10011);
 		byte[] data = content.getBytes();
-		message.setData((short) (data.length + 8), System.currentTimeMillis(),
-				data);
+		message.setSendData(data);
 		cProxy.sendMessage(message);
 	}
 
