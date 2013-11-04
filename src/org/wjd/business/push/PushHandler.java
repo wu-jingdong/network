@@ -1,4 +1,4 @@
-package org.wjd.business.control;
+package org.wjd.business.push;
 
 import java.nio.ByteBuffer;
 
@@ -16,11 +16,11 @@ import android.util.SparseArray;
  */
 public class PushHandler implements NormalHandler
 {
-	
+
 	private SparseArray<NormalHandler> handlers = new SparseArray<NormalHandler>();
 
 	/**
-	 * 注册模块处理
+	 * 注册处理模块
 	 * 
 	 * @param moduleId
 	 * @param handler
