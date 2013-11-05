@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.wjd.net.tcp_udp.BaseChannel;
-import org.wjd.net.tcp_udp.Message;
+import org.wjd.net.tcp_udp.UnsyncRequest;
 
 /**
  * tcp链接通道，采用nio
@@ -35,7 +35,7 @@ public class TcpChannel extends BaseChannel
 	private boolean connectedOn = false;
 
 	@Override
-	protected void storeMessageToSend(Message message)
+	protected void storeMessageToSend(UnsyncRequest message)
 	{
 		if (!connectedOn)
 		{
@@ -103,22 +103,22 @@ public class TcpChannel extends BaseChannel
 	/**
 	 * 消息发送实现
 	 * 
-	 * @param message
+	 * @param request
 	 */
 	@Override
-	protected boolean doSendImpl(Message message)
+	protected boolean doSendImpl(UnsyncRequest request)
 	{
-		if (null == message.getData())
+		byte[] data = request.createSendData();
+		if (null == data)
 		{
 			return false;
 		}
 		if (!connectedOn)
 		{
-			obtainMessage(NETERROR_HANDLE, message).sendToTarget();
+			obtainMessage(NETERROR_HANDLE, request).sendToTarget();
 			return false;
 		}
 
-		byte[] data = message.getData();
 		selectKey.attach(data);
 		selectKey.interestOps(selectKey.interestOps() | SelectionKey.OP_WRITE);
 		selectKey.selector().wakeup();

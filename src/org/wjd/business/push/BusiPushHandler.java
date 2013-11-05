@@ -1,10 +1,8 @@
 package org.wjd.business.push;
 
-import java.nio.ByteBuffer;
-
-import org.wjd.business.base.BusiMessage;
-import org.wjd.net.tcp_udp.Message;
+import org.wjd.business.base.BusMessage;
 import org.wjd.net.tcp_udp.NormalHandler;
+import org.wjd.net.tcp_udp.PushHandler;
 
 import android.util.SparseArray;
 
@@ -14,7 +12,7 @@ import android.util.SparseArray;
  * @author wjd
  * 
  */
-public class PushHandler implements NormalHandler
+public class BusiPushHandler implements PushHandler
 {
 
 	private SparseArray<NormalHandler> handlers = new SparseArray<NormalHandler>();
@@ -34,18 +32,16 @@ public class PushHandler implements NormalHandler
 	 * 处理推送消息
 	 */
 	@Override
-	public void handleResponse(Message message)
+	public void handleResponse(byte[] pushData)
 	{
-		if (null == message)
+		if (null == pushData || pushData.length < BusMessage.HEAD_LEN)
 		{
 			return;
 		}
-		if (message.getReceivedDataLength() < BusiMessage.HEAD_LEN)
-		{
-			return;
-		}
-		ByteBuffer buffer = ByteBuffer.wrap(message.getData());
-		NormalHandler handler = handlers.get(buffer.get());
+
+		BusMessage message = new BusMessage();
+		message.parseData(pushData);
+		NormalHandler handler = handlers.get(message.getModuleId());
 		if (null != handler)
 		{
 			handler.handleResponse(message);

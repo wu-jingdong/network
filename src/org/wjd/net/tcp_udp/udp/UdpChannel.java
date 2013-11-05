@@ -8,7 +8,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 
 import org.wjd.net.tcp_udp.BaseChannel;
-import org.wjd.net.tcp_udp.Message;
+import org.wjd.net.tcp_udp.UnsyncRequest;
 
 /**
  * udp数据通道
@@ -70,31 +70,31 @@ public class UdpChannel extends BaseChannel
 	}
 
 	@Override
-	protected boolean doSendImpl(Message message)
+	protected boolean doSendImpl(UnsyncRequest request)
 	{
-		if (null == message)
+		if (null == request)
 		{
 			return false;
 		}
 		InetAddress addr = null;
 		try
 		{
-			addr = InetAddress.getByName(message.getHost());
+			addr = InetAddress.getByName(request.getHost());
 		} catch (UnknownHostException e)
 		{
-			obtainMessage(NETERROR_HANDLE, message).sendToTarget();
+			obtainMessage(NETERROR_HANDLE, request).sendToTarget();
 			e.printStackTrace();
 			return false;
 		}
-		DatagramPacket localDatagramPacket = new DatagramPacket(
-				message.getData(), message.getData().length, addr,
-				message.getPort());
+		byte[] data = request.createSendData();
+		DatagramPacket localDatagramPacket = new DatagramPacket(data,
+				data.length, addr, request.getPort());
 		try
 		{
 			this.mSocket.send(localDatagramPacket);
 		} catch (IOException e)
 		{
-			obtainMessage(NETERROR_HANDLE, message).sendToTarget();
+			obtainMessage(NETERROR_HANDLE, request).sendToTarget();
 			e.printStackTrace();
 			return false;
 		}

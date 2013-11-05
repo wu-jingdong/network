@@ -12,17 +12,17 @@ public abstract class BaseChannel extends Handler
 	/**
 	 * 待发送的消息队列
 	 */
-	List<Message> messageToSend = new LinkedList<Message>();
+	List<UnsyncRequest> messageToSend = new LinkedList<UnsyncRequest>();
 
 	/**
 	 * 已发送的消息队列
 	 */
-	List<Message> messageSended = new LinkedList<Message>();
+	List<UnsyncRequest> messageSended = new LinkedList<UnsyncRequest>();
 
 	/**
 	 * 推送消息回调接口
 	 */
-	private NormalHandler pushHandler;
+	private PushHandler pushHandler;
 
 	/**
 	 * 发送线程
@@ -64,7 +64,7 @@ public abstract class BaseChannel extends Handler
 	 * 
 	 * @param pushHandler
 	 */
-	protected void setPushHandler(NormalHandler pushHandler)
+	protected void setPushHandler(PushHandler pushHandler)
 	{
 		this.pushHandler = pushHandler;
 	}
@@ -135,7 +135,7 @@ public abstract class BaseChannel extends Handler
 	 * 
 	 * @param message
 	 */
-	protected void storeMessageToSend(Message message)
+	protected void storeMessageToSend(UnsyncRequest message)
 	{
 		synchronized (messageToSend)
 		{
@@ -181,7 +181,7 @@ public abstract class BaseChannel extends Handler
 				{
 					e1.printStackTrace();
 				}
-				Message message = null;
+				UnsyncRequest message = null;
 				synchronized (messageToSend)
 				{
 					if (!messageToSend.isEmpty())
@@ -218,7 +218,7 @@ public abstract class BaseChannel extends Handler
 		 * 
 		 * @param message
 		 */
-		private void doSend(Message message)
+		private void doSend(UnsyncRequest message)
 		{
 			if (message.isCancelled())
 			{
@@ -245,7 +245,7 @@ public abstract class BaseChannel extends Handler
 	 * 
 	 * @param message
 	 */
-	protected abstract boolean doSendImpl(Message message);
+	protected abstract boolean doSendImpl(UnsyncRequest message);
 
 	/**
 	 * 计时器线程
@@ -372,59 +372,40 @@ public abstract class BaseChannel extends Handler
 	 */
 	protected void parseMessage(byte[] src)
 	{
-		if (null == src || src.length <= Message.HEAD_LEN)
+		if (null == src)
 		{
 			return;
 		}
-		ByteBuffer buffer = ByteBuffer.wrap(src);
-		int len = buffer.getShort();
+		ByteBuffer wrapper = ByteBuffer.wrap(src);
+		int len = wrapper.getShort();
 		if (len + 2 != src.length)
 		{
 			return;
 		}
-		long timestamp = buffer.getLong();
-
-		if (timestamp == -1)
+		UnsyncRequest request = responseMatch(src);
+		if (null != request)
 		{
-			// 推送消息
-			if (null != pushHandler)
+			if (!request.isCancelled())
 			{
-				Message message = new Message(pushHandler, null);
-				int busiLen = src.length - Message.HEAD_LEN;
-				message.setTimestamp(timestamp);
-				if (busiLen > 0)
-				{
-					byte[] data = new byte[busiLen];
-					buffer.get(data, 0, busiLen);
-					message.setReceivedData(data);
-				}
-				obtainMessage(RESPONSE_HANDLE, message).sendToTarget();
+				request.getMessage().parseData(src);
+				obtainMessage(RESPONSE_HANDLE, request).sendToTarget();
 			}
 		} else
 		{
-			// 响应消息
-			Message message = responseMatch(timestamp);
-			if (null != message && !message.isCancelled())
+			if (null != pushHandler)
 			{
-				int busiLen = src.length - Message.HEAD_LEN;
-				if (busiLen > 0)
-				{
-					byte[] data = new byte[busiLen];
-					buffer.get(data, 0, busiLen);
-					message.setReceivedData(data);
-				}
-				obtainMessage(RESPONSE_HANDLE, message).sendToTarget();
+				obtainMessage(PUSH_HANDLE, src).sendToTarget();
 			}
 		}
 	}
 
-	private Message responseMatch(long timestamp)
+	private UnsyncRequest responseMatch(byte[] receivedData)
 	{
 		synchronized (messageSended)
 		{
 			for (int i = 0, n = messageSended.size(); i < n; ++i)
 			{
-				if (messageSended.get(i).getTimestamp() == timestamp)
+				if (messageSended.get(i).getMessage().match(receivedData))
 				{
 					return messageSended.remove(i);
 				}
@@ -442,16 +423,24 @@ public abstract class BaseChannel extends Handler
 
 	protected static final int NETERROR_HANDLE = 2;
 
+	protected static final int PUSH_HANDLE = 3;
+
 	@Override
 	public void handleMessage(android.os.Message msg)
 	{
 		switch (msg.what)
 		{
 			case RESPONSE_HANDLE:
-				((Message) msg.obj).handleResponse();
+				((UnsyncRequest) msg.obj).handleResponse();
 				break;
 			case NETERROR_HANDLE:
-				((Message) msg.obj).handleNetError();
+				((UnsyncRequest) msg.obj).handleNetError();
+				break;
+			case PUSH_HANDLE:
+				if (null != pushHandler)
+				{
+					pushHandler.handleResponse((byte[]) msg.obj);
+				}
 				break;
 			default:
 				break;

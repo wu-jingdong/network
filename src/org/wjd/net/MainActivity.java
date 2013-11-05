@@ -2,9 +2,10 @@ package org.wjd.net;
 
 import java.nio.ByteBuffer;
 
+import org.wjd.net.tcp_udp.BaseMessage;
 import org.wjd.net.tcp_udp.ChannelProxy;
 import org.wjd.net.tcp_udp.ChannelProxy.CHANNEL_TYPE;
-import org.wjd.net.tcp_udp.Message;
+import org.wjd.net.tcp_udp.UnsyncRequest;
 import org.wjd.net.tcp_udp.NetErrorHandler;
 import org.wjd.net.tcp_udp.NormalHandler;
 import org.wjd.net.tcp_udp.tcp.TcpConnectHandler;
@@ -72,27 +73,28 @@ public class MainActivity extends Activity implements NetErrorHandler,
 		{
 			return;
 		}
-		Message message = new Message(this, this, "127.0.0.1", 10011);
+		UnsyncRequest message = new UnsyncRequest(this, this, "127.0.0.1",
+				10011);
 		byte[] data = content.getBytes();
-		message.setSendData(data);
+		// TODO message.setSendData(data);
 		cProxy.sendMessage(message);
 	}
 
 	@Override
-	public void handleResponse(Message message)
+	public void handleResponse(BaseMessage message)
 	{
-		tvReceived.setText(new String(message.getData()));
+		// TODO tvReceived.setText(new String(message.getData()));
 	}
 
 	@Override
-	public void handleNetError(Message message)
+	public void handleNetError(BaseMessage message)
 	{
-		byte[] data = new byte[message.getData().length - 10];
-		ByteBuffer buffer = ByteBuffer.wrap(message.getData());
-		buffer.getShort();
-		buffer.getLong();
-		buffer.get(data, 0, data.length);
-		tvReceived.setText("Send Error: " + new String(data));
+		// TODO byte[] data = new byte[message.getData().length - 10];
+		// ByteBuffer buffer = ByteBuffer.wrap(message.getData());
+		// buffer.getShort();
+		// buffer.getLong();
+		// buffer.get(data, 0, data.length);
+		// tvReceived.setText("Send Error: " + new String(data));
 	}
 
 	@Override

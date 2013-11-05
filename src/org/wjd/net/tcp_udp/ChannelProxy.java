@@ -65,7 +65,7 @@ public class ChannelProxy
 	 * 
 	 * @param pushHandler
 	 */
-	public void setPushHandler(NormalHandler pushHandler)
+	public void setPushHandler(PushHandler pushHandler)
 	{
 		if (null != channel)
 		{
@@ -93,7 +93,7 @@ public class ChannelProxy
 	 * 
 	 * @param message
 	 */
-	public void sendMessage(Message message)
+	public void sendMessage(UnsyncRequest message)
 	{
 		if (null != channel)
 		{
