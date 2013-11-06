@@ -283,6 +283,6 @@ public class UnsyncRequest
 		ByteBuffer wrapper = ByteBuffer.wrap(data);
 		wrapper.putShort((short) busiData.length);
 		wrapper.put(busiData);
-		return busiData;
+		return data;
 	}
 }

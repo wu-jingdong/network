@@ -382,30 +382,33 @@ public abstract class BaseChannel extends Handler
 		{
 			return;
 		}
-		UnsyncRequest request = responseMatch(src);
+		byte[] busiData = new byte[len];
+		wrapper.get(busiData);
+		UnsyncRequest request = responseMatch(busiData);
 		if (null != request)
 		{
 			if (!request.isCancelled())
 			{
-				request.getMessage().parseData(src);
+				request.getMessage().parseData(busiData);
 				obtainMessage(RESPONSE_HANDLE, request).sendToTarget();
 			}
 		} else
 		{
 			if (null != pushHandler)
 			{
-				obtainMessage(PUSH_HANDLE, src).sendToTarget();
+				obtainMessage(PUSH_HANDLE, busiData).sendToTarget();
 			}
 		}
 	}
 
-	private UnsyncRequest responseMatch(byte[] receivedData)
+	private UnsyncRequest responseMatch(byte[] busiData)
 	{
 		synchronized (messageSended)
 		{
 			for (int i = 0, n = messageSended.size(); i < n; ++i)
 			{
-				if (messageSended.get(i).getMessage().match(receivedData))
+				ByteBuffer wrapper = ByteBuffer.wrap(busiData);
+				if (messageSended.get(i).getMessage().match(wrapper))
 				{
 					return messageSended.remove(i);
 				}

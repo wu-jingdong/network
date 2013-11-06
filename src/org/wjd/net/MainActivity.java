@@ -1,13 +1,12 @@
 package org.wjd.net;
 
-import java.nio.ByteBuffer;
-
+import org.wjd.business.base.BusMessage;
 import org.wjd.net.tcp_udp.BaseMessage;
 import org.wjd.net.tcp_udp.ChannelProxy;
 import org.wjd.net.tcp_udp.ChannelProxy.CHANNEL_TYPE;
-import org.wjd.net.tcp_udp.UnsyncRequest;
 import org.wjd.net.tcp_udp.NetErrorHandler;
 import org.wjd.net.tcp_udp.NormalHandler;
+import org.wjd.net.tcp_udp.UnsyncRequest;
 import org.wjd.net.tcp_udp.tcp.TcpConnectHandler;
 
 import android.app.Activity;
@@ -47,7 +46,7 @@ public class MainActivity extends Activity implements NetErrorHandler,
 		tvReceived = (TextView) findViewById(R.id.tv_received);
 		tvNetStatus = (TextView) findViewById(R.id.tv_net_status);
 		// 修改此处参数即可分别测试udp和tcp
-		cProxy = new ChannelProxy(CHANNEL_TYPE.TYPE_UDP);
+		cProxy = new ChannelProxy(CHANNEL_TYPE.TYPE_TCP);
 		cProxy.setChannelConnectionStatusChangedListener(new TcpConnectHandler()
 		{
 			@Override
@@ -73,17 +72,19 @@ public class MainActivity extends Activity implements NetErrorHandler,
 		{
 			return;
 		}
-		UnsyncRequest message = new UnsyncRequest(this, this, "127.0.0.1",
+		UnsyncRequest request = new UnsyncRequest(this, this, "127.0.0.1",
 				10011);
 		byte[] data = content.getBytes();
-		// TODO message.setSendData(data);
-		cProxy.sendMessage(message);
+		BaseMessage message = new BusMessage((byte) 1, (byte) 1, 12345,
+				(byte) 2, data);
+		request.setMessage(message);
+		cProxy.sendMessage(request);
 	}
 
 	@Override
 	public void handleResponse(BaseMessage message)
 	{
-		// TODO tvReceived.setText(new String(message.getData()));
+		tvReceived.setText(message.toString());
 	}
 
 	@Override

@@ -104,15 +104,14 @@ public class BusMessage extends BaseMessage
 	}
 
 	@Override
-	public boolean match(byte[] receivedData)
+	public boolean match(ByteBuffer wrapper)
 	{
-		if (null == receivedData || receivedData.length < HEAD_LEN)
+		if (null == wrapper)
 		{
 			return false;
 		}
-		ByteBuffer buffer = ByteBuffer.wrap(receivedData);
-		return moduleId == buffer.get() && commondId == buffer.get()
-				&& sequence == buffer.get();
+		return moduleId == wrapper.get() && commondId == wrapper.get()
+				&& sequence == wrapper.get();
 	}
 
 	@Override
@@ -157,5 +156,14 @@ public class BusMessage extends BaseMessage
 		{
 			busiData = null;
 		}
+	}
+
+	@Override
+	public String toString()
+	{
+		return "BusMessage [moduleId=" + moduleId + ", commondId=" + commondId
+				+ ", userId=" + userId + ", clientType=" + clientType
+				+ ", sequence=" + sequence + ", status=" + status
+				+ ", busiData=" + new String(busiData) + "]";
 	}
 }
