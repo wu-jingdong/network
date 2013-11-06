@@ -37,12 +37,12 @@ public abstract class HttpChannel extends Handler
 	/**
 	 * 默认的请求线程数量
 	 */
-	private static final int POOL_SIZE = 2;
+	private static int POOL_SIZE = 2;
 
 	/**
 	 * 最大的请求线程数量
 	 */
-	private static final int MAX_SIZE = 5;
+	private static int MAX_SIZE = 5;
 
 	/**
 	 * 请求线程组
@@ -58,6 +58,11 @@ public abstract class HttpChannel extends Handler
 	 * 正在执行的请求任务
 	 */
 	protected List<HttpRequest> doQueue = new ArrayList<HttpRequest>();
+	
+	public HttpChannel(int poolSize)
+	{
+		POOL_SIZE = poolSize;
+	}
 
 	/**
 	 * 发送请求
