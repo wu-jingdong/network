@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.wjd.net.common.Loger;
 import org.wjd.net.tcp_udp.BaseChannel;
 import org.wjd.net.tcp_udp.UnsyncRequest;
 
@@ -125,8 +126,6 @@ public class TcpChannel extends BaseChannel
 		return true;
 	}
 
-	private int closedCount = 0;
-
 	/**
 	 * 消息接收实现
 	 */
@@ -169,16 +168,16 @@ public class TcpChannel extends BaseChannel
 			set.clear();
 		} catch (IOException e)
 		{
-			e.printStackTrace();
+			Loger.print(this.getClass().getSimpleName(), e.getMessage(),
+					Loger.ERROR);
 			onConnectionStatusChanged(false);
+			ret = false;
 		} catch (ClosedSelectorException e1)
 		{
-			e1.printStackTrace();
-			closedCount++;
-			if (closedCount > 10)
-			{
-				onConnectionStatusChanged(false);
-			}
+			Loger.print(this.getClass().getSimpleName(), e1.getMessage(),
+					Loger.ERROR);
+			onConnectionStatusChanged(false);
+			ret = false;
 		}
 		return ret;
 	}

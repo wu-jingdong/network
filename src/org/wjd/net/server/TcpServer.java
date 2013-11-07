@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.wjd.net.common.Loger;
+
 public class TcpServer extends Thread
 {
 
@@ -33,9 +35,17 @@ public class TcpServer extends Thread
 			try
 			{
 				int len = sock.getInputStream().read(buff);
-				byte[] data = new byte[len];
-				System.arraycopy(buff, 0, data, 0, data.length);
-				sock.getOutputStream().write(data);
+				Loger.print(this.getClass().getSimpleName(),
+						"tcp server read len ====== " + len, Loger.INFO);
+				if (len > 0)
+				{
+					byte[] data = new byte[len];
+					System.arraycopy(buff, 0, data, 0, data.length);
+					sock.getOutputStream().write(data);
+				} else
+				{
+					break;
+				}
 			} catch (IOException e)
 			{
 				e.printStackTrace();
