@@ -1,13 +1,14 @@
 package org.wjd.net;
 
+import org.wjd.business.audio.AudioRecPlay;
 import org.wjd.business.base.BusMessage;
+import org.wjd.business.push.BusiPushHandler;
 import org.wjd.net.tcp_udp.BaseMessage;
 import org.wjd.net.tcp_udp.ChannelProxy;
 import org.wjd.net.tcp_udp.ChannelProxy.CHANNEL_TYPE;
 import org.wjd.net.tcp_udp.NetErrorHandler;
 import org.wjd.net.tcp_udp.NormalHandler;
 import org.wjd.net.tcp_udp.UnsyncRequest;
-import org.wjd.net.tcp_udp.tcp.TcpConnectHandler;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -24,7 +25,7 @@ public class MainActivity extends Activity implements NetErrorHandler,
 
 	private TextView tvReceived;
 
-	private TextView tvNetStatus;
+	// private TextView tvNetStatus;
 
 	private ChannelProxy cProxy;
 
@@ -44,17 +45,19 @@ public class MainActivity extends Activity implements NetErrorHandler,
 					}
 				});
 		tvReceived = (TextView) findViewById(R.id.tv_received);
-		tvNetStatus = (TextView) findViewById(R.id.tv_net_status);
+		// tvNetStatus = (TextView) findViewById(R.id.tv_net_status);
 		// 修改此处参数即可分别测试udp和tcp
-		cProxy = new ChannelProxy(CHANNEL_TYPE.TYPE_TCP);
-		cProxy.setChannelConnectionStatusChangedListener(new TcpConnectHandler()
-		{
-			@Override
-			public void handleTcpConnectResult(boolean connected)
-			{
-				tvNetStatus.setText(connected ? "On" : "Off");
-			}
-		});
+		cProxy = new ChannelProxy(CHANNEL_TYPE.TYPE_UDP);
+		// cProxy.setChannelConnectionStatusChangedListener(new
+		// TcpConnectHandler()
+		// {
+		// @Override
+		// public void handleTcpConnectResult(boolean connected)
+		// {
+		// tvNetStatus.setText(connected ? "On" : "Off");
+		// }
+		// });
+		cProxy.setPushHandler(new BusiPushHandler());
 		new Thread(new Runnable()
 		{
 			@Override
@@ -63,6 +66,7 @@ public class MainActivity extends Activity implements NetErrorHandler,
 				cProxy.init("127.0.0.1", 10011);
 			}
 		}).start();
+		new AudioRecPlay().startRecord();
 	}
 
 	private void onSend()

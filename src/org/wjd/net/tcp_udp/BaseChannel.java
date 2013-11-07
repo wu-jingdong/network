@@ -216,25 +216,28 @@ public abstract class BaseChannel extends Handler
 		/**
 		 * 发送
 		 * 
-		 * @param message
+		 * @param request
 		 */
-		private void doSend(UnsyncRequest message)
+		private void doSend(UnsyncRequest request)
 		{
-			if (message.isCancelled())
+			if (request.isCancelled())
 			{
 				return;
 			}
-			if (!doSendImpl(message))
+			if (!doSendImpl(request))
 			{
 				return;
 			}
 			// 将消息加入已发送队列
-			synchronized (messageSended)
+			if (request.isWaitResponse())
 			{
-				messageSended.add(message);
-				if (messageSended.size() == 1)
+				synchronized (messageSended)
 				{
-					messageSended.notify();
+					messageSended.add(request);
+					if (messageSended.size() == 1)
+					{
+						messageSended.notify();
+					}
 				}
 			}
 		}

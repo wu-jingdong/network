@@ -6,28 +6,6 @@ public class UnsyncRequest
 {
 
 	/**
-	 * 消息透长度
-	 */
-	// public static final int HEAD_LEN = 10;
-
-	// /**
-	// * 时间戳
-	// *
-	// * 客户端请求时，时间戳为当前系统时间
-	// *
-	// * 服务端响应时，时间戳与请求的时间戳一致
-	// *
-	// * 服务器推送消息是，时间戳为-1
-	// */
-	// private long timestamp;
-	//
-	// /**
-	// * 请求、响应的数据。
-	// *
-	// */
-	// private byte[] data;
-
-	/**
 	 * 请求携带的消息
 	 */
 	private BaseMessage message;
@@ -66,6 +44,11 @@ public class UnsyncRequest
 	 * 请求目的地端口
 	 */
 	private int port;
+
+	/**
+	 * 消息是否需要等待响应
+	 */
+	private boolean waitResponse = true;
 
 	/**
 	 * udp请求使用此构造方法
@@ -284,5 +267,15 @@ public class UnsyncRequest
 		wrapper.putShort((short) busiData.length);
 		wrapper.put(busiData);
 		return data;
+	}
+
+	public boolean isWaitResponse()
+	{
+		return waitResponse;
+	}
+
+	public void setWaitResponse(boolean waitResponse)
+	{
+		this.waitResponse = waitResponse;
 	}
 }
