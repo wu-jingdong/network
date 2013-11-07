@@ -360,7 +360,7 @@ public abstract class BaseChannel extends Handler
 					e.printStackTrace();
 				}
 
-				doLinsenImpl();
+				running = doLinsenImpl();
 			}
 		}
 	}
@@ -420,7 +420,7 @@ public abstract class BaseChannel extends Handler
 	/**
 	 * 消息监听实现
 	 */
-	protected abstract void doLinsenImpl();
+	protected abstract boolean doLinsenImpl();
 
 	protected static final int RESPONSE_HANDLE = 1;
 

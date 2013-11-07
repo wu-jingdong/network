@@ -104,7 +104,7 @@ public class UdpChannel extends BaseChannel
 	private byte[] src = new byte[2048];
 
 	@Override
-	protected void doLinsenImpl()
+	protected boolean doLinsenImpl()
 	{
 
 		DatagramPacket packet = new DatagramPacket(src, src.length);
@@ -123,5 +123,6 @@ public class UdpChannel extends BaseChannel
 			{
 			}
 		}
+		return true;
 	}
 }

@@ -131,14 +131,15 @@ public class TcpChannel extends BaseChannel
 	 * 消息接收实现
 	 */
 	@Override
-	protected void doLinsenImpl()
+	protected boolean doLinsenImpl()
 	{
+		boolean ret = true;
 		try
 		{
 			int keyCnt = selector.select();
 			if (keyCnt < 0)
 			{
-				return;
+				return ret;
 			}
 			Set<SelectionKey> set = selector.selectedKeys();
 			Iterator<SelectionKey> it = set.iterator();
@@ -153,7 +154,7 @@ public class TcpChannel extends BaseChannel
 					}
 					if (key.isValid() && key.isReadable())
 					{
-						doReadMessage(key);
+						ret = doReadMessage(key);
 					}
 					if (key.isValid() && key.isWritable())
 					{
@@ -179,6 +180,7 @@ public class TcpChannel extends BaseChannel
 				onConnectionStatusChanged(false);
 			}
 		}
+		return ret;
 	}
 
 	private TcpConnectHandler connectHandler;
@@ -225,7 +227,6 @@ public class TcpChannel extends BaseChannel
 			sc.write(ByteBuffer.wrap(data));
 		}
 		key.interestOps(key.interestOps() & ~SelectionKey.OP_WRITE);
-		System.out.println("doWriteMessage -----------");
 	}
 
 	private static final int BUFFER_SIZE = 1024;
@@ -235,7 +236,7 @@ public class TcpChannel extends BaseChannel
 	 */
 	private byte[] container = new byte[BUFFER_SIZE * 5];
 
-	private void doReadMessage(SelectionKey key) throws IOException
+	private boolean doReadMessage(SelectionKey key) throws IOException
 	{
 		SocketChannel sc = (SocketChannel) key.channel();
 		ByteBuffer buffer = ByteBuffer.allocate(BUFFER_SIZE);
@@ -251,7 +252,7 @@ public class TcpChannel extends BaseChannel
 			}
 			if (length <= 0)
 			{
-				return;
+				return false;
 			}
 			byte[] res = new byte[length];
 			System.arraycopy(container, 0, res, 0, res.length);
@@ -260,6 +261,7 @@ public class TcpChannel extends BaseChannel
 		{
 			E1.printStackTrace();
 		}
+		return true;
 	}
 
 	private List<byte[]> tempReceiveData = new LinkedList<byte[]>();
