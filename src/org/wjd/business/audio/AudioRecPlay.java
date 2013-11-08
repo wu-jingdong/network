@@ -177,6 +177,8 @@ public class AudioRecPlay implements NormalHandler
 							break;
 						}
 						int eLen = speex.encode(frame, encoded);
+						Loger.print(this.getClass().getSimpleName(),
+								"Encode Len =============" + eLen, Loger.INFO);
 						if (eLen > 0)
 						{
 							sendAudioData(encoded);

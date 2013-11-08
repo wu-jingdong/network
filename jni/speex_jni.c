@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include <speex/speex.h>
+#include <speex/speex_preprocess.h>
 
 static int codec_open = 0;
 
@@ -13,7 +14,7 @@ static int enc_frame_size;
 static SpeexBits ebits, dbits;
 void *enc_state;
 void *dec_state;
-
+SpeexPreprocessState *preprocess_state;
 jint JNICALL Java_org_wjd_speex_Speex_open(JNIEnv *env, jobject obj,
 		jint compression) {
 	int tmp;
@@ -31,6 +32,21 @@ jint JNICALL Java_org_wjd_speex_Speex_open(JNIEnv *env, jobject obj,
 	speex_encoder_ctl(enc_state, SPEEX_GET_FRAME_SIZE, &enc_frame_size);
 	speex_decoder_ctl(dec_state, SPEEX_GET_FRAME_SIZE, &dec_frame_size);
 
+	tmp = 1;
+	preprocess_state = speex_preprocess_state_init(dec_frame_size,
+			compression * 1000);
+	speex_preprocess_ctl(preprocess_state, SPEEX_PREPROCESS_SET_DENOISE, &tmp);
+	tmp = -25;
+	speex_preprocess_ctl(preprocess_state, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS,
+			&tmp);
+	tmp = 1;
+	speex_preprocess_ctl(preprocess_state, SPEEX_PREPROCESS_SET_VAD, &tmp);
+	tmp = 80;
+	speex_preprocess_ctl(preprocess_state, SPEEX_PREPROCESS_SET_PROB_START,
+			&tmp);
+	tmp = 65;
+	speex_preprocess_ctl(preprocess_state, SPEEX_PREPROCESS_SET_PROB_CONTINUE,
+			&tmp);
 	return (jint) 0;
 }
 
@@ -46,6 +62,9 @@ jint Java_org_wjd_speex_Speex_encode(JNIEnv *env, jobject obj, jshortArray lin,
 	speex_bits_reset(&ebits);
 
 	(*env)->GetShortArrayRegion(env, lin, 0, enc_frame_size, buffer);
+	if (!speex_preprocess_run(preprocess_state, buffer)) {
+		return 0;
+	}
 	speex_encode_int(enc_state, buffer, &ebits);
 	int len = speex_bits_write(&ebits, (char *) output_buffer, enc_frame_size);
 	(*env)->SetByteArrayRegion(env, encoded, 0, len, output_buffer);
