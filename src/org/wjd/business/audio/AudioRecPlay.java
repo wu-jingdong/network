@@ -4,7 +4,12 @@ import java.nio.ShortBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.wjd.business.base.Module;
 import org.wjd.net.common.Loger;
+import org.wjd.net.tcp_udp.BaseMessage;
+import org.wjd.net.tcp_udp.ChannelProxy;
+import org.wjd.net.tcp_udp.NormalHandler;
+import org.wjd.net.tcp_udp.UnsyncRequest;
 import org.wjd.speex.Speex;
 
 import android.media.AudioFormat;
@@ -13,7 +18,7 @@ import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder.AudioSource;
 
-public class AudioRecPlay
+public class AudioRecPlay implements NormalHandler
 {
 
 	private static final int REC_SIZE = 8000;
@@ -28,14 +33,31 @@ public class AudioRecPlay
 
 	private Speex speex;
 
-	private AudioService aService;
+	private String ip;
+
+	private int port;
+
+	private ChannelProxy cProxy;
 
 	public AudioRecPlay()
 	{
-		this.aService = new AudioService();
 		speex = new Speex();
 		speex.init();
 		frameSize = speex.getFrameSize();
+	}
+
+	/**
+	 * 设置发送音频数据需要的参数
+	 * 
+	 * @param cProxy
+	 * @param ip
+	 * @param port
+	 */
+	public void setParameter(ChannelProxy cProxy, String ip, int port)
+	{
+		this.ip = ip;
+		this.port = port;
+		this.cProxy = cProxy;
 	}
 
 	private byte[] lock = new byte[0];
@@ -144,11 +166,9 @@ public class AudioRecPlay
 						}
 					}
 					int eLen = speex.encode(frame, encoded);
-					Loger.print(this.getClass().getSimpleName(),
-							"encode len ======== " + eLen, Loger.INFO);
 					if (eLen > 0)
 					{
-						aService.sendAudioData(encoded);
+						sendAudioData(encoded);
 					}
 				}
 			}
@@ -165,6 +185,18 @@ public class AudioRecPlay
 				}
 			}
 		}
+	}
+
+	private void sendAudioData(byte[] encoded)
+	{
+		if (null == cProxy)
+		{
+			return;
+		}
+		UnsyncRequest request = new UnsyncRequest(null, null, ip, port);
+		AudioMessage msg = new AudioMessage(Module.M_AUDIO, encoded);
+		request.setMessage(msg);
+		cProxy.sendRequest(request);
 	}
 
 	private boolean isRecording()
@@ -291,5 +323,16 @@ public class AudioRecPlay
 	{
 		return null != track
 				&& track.getPlayState() == AudioTrack.PLAYSTATE_PLAYING;
+	}
+
+	@Override
+	public void handleResponse(BaseMessage message)
+	{
+		AudioMessage aMsg = (AudioMessage) message;
+		byte[] data = aMsg.getBusiData();
+		if (null != data)
+		{
+			addAudioDataToCacahe(data);
+		}
 	}
 }

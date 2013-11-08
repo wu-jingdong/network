@@ -93,4 +93,9 @@ public class AudioMessage extends BaseMessage
 			a_data = null;
 		}
 	}
+
+	public byte[] getBusiData()
+	{
+		return a_data;
+	}
 }

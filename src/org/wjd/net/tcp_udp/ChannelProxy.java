@@ -91,13 +91,13 @@ public class ChannelProxy
 	/**
 	 * 发送消息
 	 * 
-	 * @param message
+	 * @param request
 	 */
-	public void sendMessage(UnsyncRequest message)
+	public void sendRequest(UnsyncRequest request)
 	{
 		if (null != channel)
 		{
-			channel.storeMessageToSend(message);
+			channel.storeMessageToSend(request);
 		}
 	}
 

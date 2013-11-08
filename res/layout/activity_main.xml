@@ -37,6 +37,7 @@
         android:layout_alignLeft="@+id/btn_send"
         android:layout_below="@+id/btn_send"
         android:layout_marginTop="31dp"
+        android:text="received"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
@@ -46,5 +47,33 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="Unknown" />
+
+    <Button
+        android:id="@+id/btn_audio_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/edit_ip"
+        android:layout_below="@+id/edit_ip"
+        android:layout_marginTop="29dp"
+        android:text="发送语音" />
+
+    <EditText
+        android:id="@+id/edit_ip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_received"
+        android:layout_below="@+id/tv_received"
+        android:layout_marginTop="14dp"
+        android:ems="10"
+        android:text="192.168.1.110" />
+
+    <Button
+        android:id="@+id/btn_audio_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btn_audio_start"
+        android:layout_alignBottom="@+id/btn_audio_start"
+        android:layout_alignRight="@+id/edit_ip"
+        android:text="停止语音" />
 
 </RelativeLayout>
