@@ -14,7 +14,6 @@ static SpeexBits ebits, dbits;
 void *enc_state;
 void *dec_state;
 
-
 jint JNICALL Java_org_wjd_speex_Speex_open(JNIEnv *env, jobject obj,
 		jint compression) {
 	int tmp;
@@ -35,11 +34,11 @@ jint JNICALL Java_org_wjd_speex_Speex_open(JNIEnv *env, jobject obj,
 	return (jint) 0;
 }
 
-jint Java_org_wjd_speex_Speex_encode(JNIEnv *env, jobject obj, jshortArray lin, jint offset,
-		jbyteArray encoded, jint size) {
+jint Java_org_wjd_speex_Speex_encode(JNIEnv *env, jobject obj, jshortArray lin,
+		jbyteArray encoded) {
 
 	jshort buffer[enc_frame_size];
-	jbyte output_buffer[size];
+	jbyte output_buffer[enc_frame_size];
 
 	if (!codec_open)
 		return 0;
@@ -47,15 +46,15 @@ jint Java_org_wjd_speex_Speex_encode(JNIEnv *env, jobject obj, jshortArray lin, 
 	speex_bits_reset(&ebits);
 
 	(*env)->GetShortArrayRegion(env, lin, 0, enc_frame_size, buffer);
-	int len = speex_encode_int(enc_state, buffer, &ebits);
-	speex_bits_write(&ebits, (char *) output_buffer, size);
-	(*env)->SetByteArrayRegion(env, encoded, 0, size, output_buffer);
+	speex_encode_int(enc_state, buffer, &ebits);
+	int len = speex_bits_write(&ebits, (char *) output_buffer, enc_frame_size);
+	(*env)->SetByteArrayRegion(env, encoded, 0, len, output_buffer);
 
 	return (jint) len;
 }
 
-jint JNICALL Java_org_wjd_speex_Speex_decode(JNIEnv *env, jobject obj, jbyteArray encoded,
-		jshortArray lin, jint size) {
+jint JNICALL Java_org_wjd_speex_Speex_decode(JNIEnv *env, jobject obj,
+		jbyteArray encoded, jshortArray lin, jint size) {
 
 	jbyte buffer[dec_frame_size];
 	jshort output_buffer[dec_frame_size];
