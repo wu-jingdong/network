@@ -125,4 +125,24 @@ public class UdpChannel extends BaseChannel
 		}
 		return true;
 	}
+
+	@Override
+	protected void doSendImmediately(UnsyncRequest request, InetAddress addr)
+	{
+		if (null == request || null == addr)
+		{
+			return;
+		}
+
+		byte[] data = request.createSendData();
+		DatagramPacket localDatagramPacket = new DatagramPacket(data,
+				data.length, addr, request.getPort());
+		try
+		{
+			this.mSocket.send(localDatagramPacket);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }

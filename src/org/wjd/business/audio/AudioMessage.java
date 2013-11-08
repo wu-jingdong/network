@@ -98,4 +98,9 @@ public class AudioMessage extends BaseMessage
 	{
 		return a_data;
 	}
+
+	public short getSequence()
+	{
+		return sequence;
+	}
 }

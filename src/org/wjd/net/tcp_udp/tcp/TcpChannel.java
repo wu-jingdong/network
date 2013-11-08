@@ -1,6 +1,7 @@
 package org.wjd.net.tcp_udp.tcp;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.CancelledKeyException;
@@ -369,5 +370,11 @@ public class TcpChannel extends BaseChannel
 			return;
 		}
 		super.handleMessage(msg);
+	}
+
+	@Override
+	protected void doSendImmediately(UnsyncRequest message, InetAddress addr)
+	{
+		// Nothing to do.
 	}
 }

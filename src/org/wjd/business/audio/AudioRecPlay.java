@@ -1,5 +1,7 @@
 package org.wjd.business.audio;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.nio.ShortBuffer;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +39,8 @@ public class AudioRecPlay implements NormalHandler
 
 	private int port;
 
+	private InetAddress addr;
+
 	private ChannelProxy cProxy;
 
 	public AudioRecPlay()
@@ -58,6 +62,14 @@ public class AudioRecPlay implements NormalHandler
 		this.ip = ip;
 		this.port = port;
 		this.cProxy = cProxy;
+		try
+		{
+			addr = InetAddress.getByName(ip);
+		} catch (UnknownHostException e)
+		{
+			Loger.print(this.getClass().getSimpleName(), e.getMessage(),
+					Loger.ERROR);
+		}
 	}
 
 	private byte[] lock = new byte[0];
@@ -164,11 +176,11 @@ public class AudioRecPlay implements NormalHandler
 						{
 							break;
 						}
-					}
-					int eLen = speex.encode(frame, encoded);
-					if (eLen > 0)
-					{
-						sendAudioData(encoded);
+						int eLen = speex.encode(frame, encoded);
+						if (eLen > 0)
+						{
+							sendAudioData(encoded);
+						}
 					}
 				}
 			}
@@ -196,7 +208,8 @@ public class AudioRecPlay implements NormalHandler
 		UnsyncRequest request = new UnsyncRequest(null, null, ip, port);
 		AudioMessage msg = new AudioMessage(Module.M_AUDIO, encoded);
 		request.setMessage(msg);
-		cProxy.sendRequest(request);
+		request.setWaitResponse(false);
+		cProxy.sendRequestImmediately(request, addr);
 	}
 
 	private boolean isRecording()
@@ -332,6 +345,10 @@ public class AudioRecPlay implements NormalHandler
 		byte[] data = aMsg.getBusiData();
 		if (null != data)
 		{
+			Loger.print(
+					this.getClass().getSimpleName(),
+					"received data sequence ================== "
+							+ aMsg.getSequence(), Loger.INFO);
 			addAudioDataToCacahe(data);
 		}
 	}

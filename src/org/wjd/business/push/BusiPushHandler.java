@@ -54,7 +54,7 @@ public class BusiPushHandler implements PushHandler
 	 * 处理推送消息
 	 */
 	@Override
-	public void handleResponse(byte[] pushData)
+	public void handlePush(byte[] pushData)
 	{
 		if (null == pushData || pushData.length < BusMessage.HEAD_LEN)
 		{

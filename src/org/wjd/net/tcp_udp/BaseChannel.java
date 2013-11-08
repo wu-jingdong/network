@@ -1,5 +1,6 @@
 package org.wjd.net.tcp_udp;
 
+import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
@@ -251,6 +252,18 @@ public abstract class BaseChannel extends Handler
 	protected abstract boolean doSendImpl(UnsyncRequest message);
 
 	/**
+	 * 立刻发送消息，消息不经过缓存，直接发送
+	 * 
+	 * ps：只有UDP支持此功能
+	 * 
+	 * @param req
+	 * @param addr
+	 * @return
+	 */
+	protected abstract void doSendImmediately(UnsyncRequest req,
+			InetAddress addr);
+
+	/**
 	 * 计时器线程
 	 * 
 	 * @author wjd
@@ -399,7 +412,7 @@ public abstract class BaseChannel extends Handler
 		{
 			if (null != pushHandler)
 			{
-				obtainMessage(PUSH_HANDLE, busiData).sendToTarget();
+				pushHandler.handlePush(busiData);
 			}
 		}
 	}
@@ -429,8 +442,6 @@ public abstract class BaseChannel extends Handler
 
 	protected static final int NETERROR_HANDLE = 2;
 
-	protected static final int PUSH_HANDLE = 3;
-
 	@Override
 	public void handleMessage(android.os.Message msg)
 	{
@@ -441,12 +452,6 @@ public abstract class BaseChannel extends Handler
 				break;
 			case NETERROR_HANDLE:
 				((UnsyncRequest) msg.obj).handleNetError();
-				break;
-			case PUSH_HANDLE:
-				if (null != pushHandler)
-				{
-					pushHandler.handleResponse((byte[]) msg.obj);
-				}
 				break;
 			default:
 				break;

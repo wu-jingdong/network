@@ -1,7 +1,7 @@
 package org.wjd.net.tcp_udp;
 
-import org.wjd.net.server.TcpServer;
-import org.wjd.net.server.UdpServer;
+import java.net.InetAddress;
+
 import org.wjd.net.tcp_udp.tcp.TcpChannel;
 import org.wjd.net.tcp_udp.tcp.TcpConnectHandler;
 import org.wjd.net.tcp_udp.udp.UdpChannel;
@@ -34,12 +34,12 @@ public class ChannelProxy
 			case TYPE_TCP:
 				channel = new TcpChannel();
 				// 测试使用
-				new TcpServer().start();
+				// new TcpServer().start();
 				break;
 			case TYPE_UDP:
 				channel = new UdpChannel();
 				// 测试使用
-				new UdpServer().start();
+				// new UdpServer().start();
 				break;
 			default:
 				break;
@@ -98,6 +98,22 @@ public class ChannelProxy
 		if (null != channel)
 		{
 			channel.storeMessageToSend(request);
+		}
+	}
+
+	/**
+	 * 即刻发送消息，只支持UDP消息
+	 * 
+	 * 消息不处理响应，主要用于音视频等大量，频繁的数据请求
+	 * 
+	 * @param request
+	 * @param addr
+	 */
+	public void sendRequestImmediately(UnsyncRequest request, InetAddress addr)
+	{
+		if (null != channel)
+		{
+			channel.doSendImmediately(request, addr);
 		}
 	}
 
