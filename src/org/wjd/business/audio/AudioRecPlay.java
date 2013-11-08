@@ -347,10 +347,6 @@ public class AudioRecPlay implements NormalHandler
 		byte[] data = aMsg.getBusiData();
 		if (null != data)
 		{
-			Loger.print(
-					this.getClass().getSimpleName(),
-					"received data sequence ================== "
-							+ aMsg.getSequence(), Loger.INFO);
 			addAudioDataToCacahe(data);
 		}
 	}
