@@ -2,6 +2,7 @@ package org.wjd;
 
 import org.wjd.business.audio.AudioActivity;
 import org.wjd.business.normal.NormalActivity;
+import org.wjd.business.picture.DownloadPictureActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,7 +18,7 @@ public class MainActivity extends BaseActivity
 	private ListView listDemos;
 
 	private Class<?>[] activitys = new Class[] { NormalActivity.class,
-			AudioActivity.class };
+			AudioActivity.class, DownloadPictureActivity.class };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)

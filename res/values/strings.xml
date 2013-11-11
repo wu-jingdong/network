@@ -9,6 +9,7 @@
     <string-array name="demos">
         <item>发送普通消息</item>
         <item>发送音频消息</item>
+        <item>图片下载</item>
     </string-array>
 
 </resources>

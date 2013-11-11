@@ -1,6 +1,7 @@
 package org.wjd;
 
 import org.wjd.business.push.BusiPushHandler;
+import org.wjd.net.common.FileUtil;
 import org.wjd.net.tcp_udp.ChannelProxy;
 import org.wjd.net.tcp_udp.ChannelProxy.CHANNEL_TYPE;
 
@@ -18,6 +19,7 @@ public class App extends Application
 	public void onCreate()
 	{
 		super.onCreate();
+		FileUtil.newInstance().initDir(getBaseContext());
 		cProxy = new ChannelProxy(CTYPE);
 		cProxy.setPushHandler(BusiPushHandler.instance);
 		new Thread(new Runnable()

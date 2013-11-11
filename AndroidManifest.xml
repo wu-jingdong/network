@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name="org.wjd.App"
@@ -29,6 +30,8 @@
         <activity android:name=".business.normal.NormalActivity" >
         </activity>
         <activity android:name=".business.audio.AudioActivity" >
+        </activity>
+        <activity android:name=".business.picture.DownloadPictureActivity" >
         </activity>
     </application>
 

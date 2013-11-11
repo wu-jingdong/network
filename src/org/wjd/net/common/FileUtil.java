@@ -1,9 +1,7 @@
 package org.wjd.net.common;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import android.content.Context;
 import android.os.Environment;
@@ -12,12 +10,8 @@ import android.text.TextUtils;
 public class FileUtil
 {
 
-	private static final String BASE_URL = "/jumpauto";
-	private static final String ATTACHMENT = "/jumpauto/attachment";
-	private static final String IMAGE = "/jumpauto/image";
-	private static final String AUDIO = "/jumpauto/audio";
-	private static final String VIDEO = "/jumpauto/video";
-	private static final String TEMP = "/jumpauto/temp";
+	private static final String BASE_URL = "/network";
+	private static final String IMAGE = "/network/image";
 
 	private static FileUtil ins = null;
 
@@ -87,33 +81,12 @@ public class FileUtil
 					BASE_URL);
 			if (!rloveDir.exists())
 				rloveDir.mkdir();
-			File attachment = new File(
-					Environment.getExternalStorageDirectory(), ATTACHMENT);
-			if (!attachment.exists())
-				attachment.mkdir();
+
 			File img = new File(Environment.getExternalStorageDirectory(),
 					IMAGE);
 			if (!img.exists())
 				img.mkdir();
-			File temp = new File(Environment.getExternalStorageDirectory(),
-					TEMP);
-			if (!temp.exists())
-				temp.mkdir();
-			File audio = new File(Environment.getExternalStorageDirectory(),
-					AUDIO);
-			if (!audio.exists())
-				audio.mkdir();
-
-			File video = new File(Environment.getExternalStorageDirectory(),
-					VIDEO);
-			if (!video.exists())
-				video.mkdir();
 		}
-	}
-
-	public void deleteTemp()
-	{
-		delDirectory(TEMP);
 	}
 
 	public static String append(String url)
@@ -121,29 +94,9 @@ public class FileUtil
 		return BASE_URL + "/" + url;
 	}
 
-	public static String appendWithAttach(String url)
-	{
-		return ATTACHMENT + "/" + url;
-	}
-
 	public static String appendWithImg(String url)
 	{
 		return IMAGE + "/" + url;
-	}
-
-	public static String appendWithAudio(String url)
-	{
-		return AUDIO + "/" + url;
-	}
-
-	public static String appendWithVideo(String url)
-	{
-		return VIDEO + "/" + url;
-	}
-
-	public static String appendWithTemp(String url)
-	{
-		return TEMP + "/" + url;
 	}
 
 	public void delDirectory(String dir)
@@ -180,56 +133,6 @@ public class FileUtil
 		boolean ret = tempFile.renameTo(destFile);
 		Loger.print(this.getClass().getSimpleName(),
 				"copyTemp2Dest ret ============ " + ret, Loger.INFO);
-	}
-
-	public synchronized boolean storeFile(InputStream is, String name)
-	{
-		boolean flag = false;
-		if (null == is)
-			return flag;
-		File file = null;
-		FileOutputStream fos = null;
-		try
-		{
-			file = getFile(name, true);
-			fos = new FileOutputStream(file);
-			byte[] buffer = new byte[1024];
-			int length = 0;
-			while ((length = is.read(buffer)) > 0)
-			{
-				fos.write(buffer, 0, length);
-			}
-			flag = true;
-		} catch (Exception e)
-		{
-			Loger.print("FileUtil", e.getMessage(), Loger.ERROR);
-			flag = false;
-		} finally
-		{
-			if (null != fos)
-			{
-				try
-				{
-					fos.flush();
-					fos.close();
-				} catch (IOException e)
-				{
-					Loger.print("FileUtil", e.getMessage(), Loger.ERROR);
-					flag = false;
-				}
-			}
-			if (null != is)
-			{
-				try
-				{
-					is.close();
-				} catch (IOException e)
-				{
-					flag = false;
-				}
-			}
-		}
-		return flag;
 	}
 
 	public synchronized boolean fileExist(String route)

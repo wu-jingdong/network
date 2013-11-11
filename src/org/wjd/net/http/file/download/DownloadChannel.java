@@ -74,8 +74,10 @@ public class DownloadChannel extends UDChannel
 			boolean success = response.getStatusLine().getStatusCode() == 200;
 			if (success)
 			{
+				int totalLen = Integer.parseInt(response.getFirstHeader(
+						"Content-Length").getValue());
 				success = storeFile(get, holder, response.getEntity()
-						.getContent(), request);
+						.getContent(), request, totalLen);
 			}
 			if (null != request.getmDownloadCallback())
 			{
@@ -104,7 +106,7 @@ public class DownloadChannel extends UDChannel
 	 * @return
 	 */
 	private boolean storeFile(HttpGet get, ProgressHolder holder,
-			InputStream is, UDRequest request)
+			InputStream is, UDRequest request, int totalLen)
 	{
 		holder.indicator = request.getMatchIndicator();
 		holder.callback = request.getmProgressCallback();
@@ -122,7 +124,6 @@ public class DownloadChannel extends UDChannel
 			byte[] buffer = new byte[1024];
 			int length = 0;
 			int count = 0;
-			int available = is.available();
 			while ((length = is.read(buffer)) > 0)
 			{
 				fos.write(buffer, 0, length);
@@ -134,7 +135,7 @@ public class DownloadChannel extends UDChannel
 				}
 				if (null != request.getmProgressCallback())
 				{
-					holder.progress = 100 * count / available;
+					holder.progress = 100 * count / totalLen;
 					obtainMessage(WHAT_PROGRESS, holder).sendToTarget();
 				}
 			}
