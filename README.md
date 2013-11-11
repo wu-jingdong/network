@@ -10,13 +10,15 @@ The response data must begin with two bytes of length and business data as well.
 The protocol stack will parse the length of the response data to validate the integrity.
 After verification, the protocol stack will set pure business data to the matched request.
 	
-BusMessage must extends the BaseMessge and implements the abstract method in BaseMessage.
+BusiMessage must extends the BaseMessge and implements the abstract method in BaseMessage.
 The protocol stack will match the request when the response data reach.
-The BusMessage must implements the 'match' method to match request via the received business data.
+The BusiMessage must implements the 'match' method to match request via the received business data.
+
+You can send data frequently(immediately, without delay) via the Udp stack, such as audio data or video data.
 
 Tcp Stack
 ---------------------------
-Have the same framework with the Udp Stack.
+Have the same framework with the Udp Stack. But does not support frequent media-data.
 
 Implements via nio. And have the combine-packet function.
 
