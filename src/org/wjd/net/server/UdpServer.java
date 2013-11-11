@@ -5,8 +5,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
-public class UdpServer extends Thread
+public class UdpServer extends Server
 {
+
 	DatagramSocket socket;
 
 	@Override
@@ -21,7 +22,7 @@ public class UdpServer extends Thread
 			e.printStackTrace();
 		}
 		byte[] buff = new byte[2048];
-		while (true)
+		while (running)
 		{
 			try
 			{
@@ -33,6 +34,17 @@ public class UdpServer extends Thread
 			{
 				e.printStackTrace();
 			}
+		}
+		closeSock();
+	}
+
+	@Override
+	protected void closeSock()
+	{
+		if (null != socket)
+		{
+			socket.close();
+			socket = null;
 		}
 	}
 }

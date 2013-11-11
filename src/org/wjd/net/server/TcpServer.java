@@ -6,7 +6,7 @@ import java.net.Socket;
 
 import org.wjd.net.common.Loger;
 
-public class TcpServer extends Thread
+public class TcpServer extends Server
 {
 
 	private ServerSocket socket;
@@ -30,7 +30,7 @@ public class TcpServer extends Thread
 		{
 			e1.printStackTrace();
 		}
-		while (null != sock)
+		while (null != sock && running)
 		{
 			try
 			{
@@ -46,6 +46,23 @@ public class TcpServer extends Thread
 				{
 					break;
 				}
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		closeSock();
+	}
+
+	@Override
+	protected void closeSock()
+	{
+		if (null != socket)
+		{
+			try
+			{
+				socket.close();
+				socket = null;
 			} catch (IOException e)
 			{
 				e.printStackTrace();

@@ -28,7 +28,7 @@ public class UnsyncRequest
 	/**
 	 * 服务器响应回调接口
 	 */
-	private NormalHandler responseHandler;
+	private ResponseHandler responseHandler;
 
 	/**
 	 * 网络异常回调接口
@@ -58,7 +58,7 @@ public class UnsyncRequest
 	 * @param host
 	 * @param port
 	 */
-	public UnsyncRequest(NormalHandler responseHandler,
+	public UnsyncRequest(ResponseHandler responseHandler,
 			NetErrorHandler neterrorHandler, String host, int port)
 	{
 		this.responseHandler = responseHandler;
@@ -73,7 +73,7 @@ public class UnsyncRequest
 	 * @param responseHandler
 	 * @param neterrorHandler
 	 */
-	public UnsyncRequest(NormalHandler responseHandler,
+	public UnsyncRequest(ResponseHandler responseHandler,
 			NetErrorHandler neterrorHandler)
 	{
 		this.responseHandler = responseHandler;

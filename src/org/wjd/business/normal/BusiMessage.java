@@ -1,10 +1,10 @@
-package org.wjd.business.base;
+package org.wjd.business.normal;
 
 import java.nio.ByteBuffer;
 
 import org.wjd.net.tcp_udp.BaseMessage;
 
-public class BusMessage extends BaseMessage
+public class BusiMessage extends BaseMessage
 {
 
 	/**
@@ -52,12 +52,12 @@ public class BusMessage extends BaseMessage
 	 */
 	private byte[] busiData;
 
-	public BusMessage()
+	public BusiMessage()
 	{
 
 	}
 
-	public BusMessage(byte moduleId, byte commondId, long userId,
+	public BusiMessage(byte moduleId, byte commondId, long userId,
 			byte clientType, byte[] busiData)
 	{
 		super();
@@ -133,6 +133,11 @@ public class BusMessage extends BaseMessage
 		return data;
 	}
 
+	public boolean statusOk()
+	{
+		return 0 == status;
+	}
+
 	@Override
 	public void parseData(byte[] receivedData)
 	{
@@ -165,5 +170,14 @@ public class BusMessage extends BaseMessage
 				+ ", userId=" + userId + ", clientType=" + clientType
 				+ ", sequence=" + sequence + ", status=" + status
 				+ ", busiData=" + new String(busiData) + "]";
+	}
+
+	public String getBusiString()
+	{
+		if (null == busiData)
+		{
+			return "";
+		}
+		return new String(busiData);
 	}
 }

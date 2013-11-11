@@ -4,5 +4,11 @@
     <string name="app_name">NetworkModule</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="audio_udp">Sorry, audio can be sent via Udp channel only.</string>
+
+    <string-array name="demos">
+        <item>发送普通消息</item>
+        <item>发送音频消息</item>
+    </string-array>
 
 </resources>

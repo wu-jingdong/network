@@ -2,11 +2,11 @@ package org.wjd.business.push;
 
 import java.nio.ByteBuffer;
 
+import org.wjd.business.Module;
 import org.wjd.business.audio.AudioMessage;
-import org.wjd.business.base.BusMessage;
-import org.wjd.business.base.Module;
+import org.wjd.business.normal.BusiMessage;
 import org.wjd.net.tcp_udp.BaseMessage;
-import org.wjd.net.tcp_udp.NormalHandler;
+import org.wjd.net.tcp_udp.ResponseHandler;
 import org.wjd.net.tcp_udp.PushHandler;
 
 import android.util.SparseArray;
@@ -22,11 +22,11 @@ public class BusiPushHandler implements PushHandler
 
 	public static BusiPushHandler instance = new BusiPushHandler();
 
-	private SparseArray<NormalHandler> handlers = new SparseArray<NormalHandler>();
+	private SparseArray<ResponseHandler> handlers = new SparseArray<ResponseHandler>();
 
 	private BusiPushHandler()
 	{
-
+		
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class BusiPushHandler implements PushHandler
 	 * @param moduleId
 	 * @param handler
 	 */
-	public void registHandler(byte moduleId, NormalHandler handler)
+	public void registHandler(byte moduleId, ResponseHandler handler)
 	{
 		handlers.append(moduleId, handler);
 	}
@@ -56,13 +56,13 @@ public class BusiPushHandler implements PushHandler
 	@Override
 	public void handlePush(byte[] pushData)
 	{
-		if (null == pushData || pushData.length < BusMessage.HEAD_LEN)
+		if (null == pushData || pushData.length < BusiMessage.HEAD_LEN)
 		{
 			return;
 		}
 		ByteBuffer buffer = ByteBuffer.wrap(pushData);
 		byte moduleId = buffer.get();
-		NormalHandler handler = handlers.get(moduleId);
+		ResponseHandler handler = handlers.get(moduleId);
 		if (null == handler)
 		{
 			return;
@@ -74,7 +74,7 @@ public class BusiPushHandler implements PushHandler
 			message.parseData(pushData);
 		} else
 		{
-			message = new BusMessage();
+			message = new BusiMessage();
 			message.parseData(pushData);
 		}
 		if (null != message)

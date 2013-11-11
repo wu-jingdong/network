@@ -1,6 +1,6 @@
 package org.wjd.net.tcp_udp;
 
-public interface NormalHandler
+public interface ResponseHandler
 {
 	public void handleResponse(BaseMessage message);
 }

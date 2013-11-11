@@ -50,7 +50,7 @@ public class UdpChannel extends BaseChannel
 	{
 		try
 		{
-			mSocket = new DatagramSocket(10100 + idx);
+			mSocket = new DatagramSocket(10101 + idx);
 		} catch (SocketException e)
 		{
 			e.printStackTrace();

@@ -6,11 +6,11 @@ import java.nio.ShortBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.wjd.business.base.Module;
+import org.wjd.business.Module;
 import org.wjd.net.common.Loger;
 import org.wjd.net.tcp_udp.BaseMessage;
 import org.wjd.net.tcp_udp.ChannelProxy;
-import org.wjd.net.tcp_udp.NormalHandler;
+import org.wjd.net.tcp_udp.ResponseHandler;
 import org.wjd.net.tcp_udp.UnsyncRequest;
 import org.wjd.speex.Speex;
 
@@ -20,7 +20,7 @@ import android.media.AudioRecord;
 import android.media.AudioTrack;
 import android.media.MediaRecorder.AudioSource;
 
-public class AudioRecPlay implements NormalHandler
+public class AudioRecPlay implements ResponseHandler
 {
 
 	private static final int REC_SIZE = 8000;

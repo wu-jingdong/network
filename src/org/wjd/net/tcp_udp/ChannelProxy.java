@@ -17,7 +17,7 @@ public class ChannelProxy
 
 	public enum CHANNEL_TYPE
 	{
-		TYPE_TCP, TYPE_UDP, TYPE_HTTP
+		TYPE_TCP, TYPE_UDP
 	}
 
 	private BaseChannel channel;
@@ -33,13 +33,9 @@ public class ChannelProxy
 		{
 			case TYPE_TCP:
 				channel = new TcpChannel();
-				// 测试使用
-				// new TcpServer().start();
 				break;
 			case TYPE_UDP:
 				channel = new UdpChannel();
-				// 测试使用
-				// new UdpServer().start();
 				break;
 			default:
 				break;
