@@ -13,7 +13,6 @@ After verification, the protocol stack will set pure business data to the matche
 BusMessage must extends the BaseMessge and implements the abstract method in BaseMessage.
 The protocol stack will match the request when the response data reach.
 The BusMessage must implements the 'match' method to match request via the received business data.
-	
 
 Tcp Stack
 ---------------------------

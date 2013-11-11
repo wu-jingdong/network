@@ -86,13 +86,13 @@ public abstract class UDChannel extends Handler
 		int size = threads.size();
 		for (int i = 0; i < size; ++i)
 		{
-			if (threads.get(i).waiting)
+			synchronized (threads.get(i))
 			{
-				synchronized (threads.get(i))
+				if (threads.get(i).waiting)
 				{
 					threads.get(i).notify();
+					return;
 				}
-				return;
 			}
 		}
 		// 如果在线程池中没找到空闲的线程
