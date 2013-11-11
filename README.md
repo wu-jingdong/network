@@ -26,7 +26,7 @@ Implements via nio. And have the combine-packet function.
 Http Stack
 ---------------------------
 There is a thread pool in the protocol stack(org.wjd.net.http.conn).
-POOL_SIZE can be setted via the constructor method.
+POOL_SIZE indicate the cached threads number that can be reused.
 MAX_SIZE indicate the max request that can be sent at the same time.
 
 The file upload-download function under org.wjd.net.http.file package.
