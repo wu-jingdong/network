@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:text="Upload Url:" />
+
+    <EditText
+        android:id="@+id/edit_upload_url"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_below="@+id/textView1"
+        android:ems="10" />
+
+    <ImageView
+        android:id="@+id/img_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/edit_upload_url"
+        android:layout_below="@+id/edit_upload_url"
+        android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/btn_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/img_preview"
+        android:layout_below="@+id/img_preview"
+        android:layout_marginTop="18dp"
+        android:text="Album" />
+
+    <Button
+        android:id="@+id/btn_upload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btn_album"
+        android:layout_below="@+id/btn_album"
+        android:layout_marginTop="18dp"
+        android:text="Upload" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btn_upload"
+        android:layout_below="@+id/btn_upload"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="18dp" />
+
+</RelativeLayout>

@@ -117,7 +117,7 @@ public class DownloadPictureActivity extends BaseActivity implements
 		{
 			this.progress.setVisibility(View.GONE);
 			btnDownload.setEnabled(true);
-			if (result == 0)
+			if (result == SUCCESS)
 			{
 				setBitmap(imgPreview, getScreenWidth(), false, localRoute);
 			} else

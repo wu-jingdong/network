@@ -29,7 +29,7 @@ public class UDRequest
 	/**
 	 * 文件上传/下载完成的回调
 	 */
-	private UDCallback mDownloadCallback;
+	private UDCallback callback;
 
 	/**
 	 * 文件上传/下载进度回调
@@ -57,18 +57,18 @@ public class UDRequest
 	 * @param localRoute
 	 * @param remoteRoute
 	 * @param matchIndicator
-	 * @param mDownloadCallback
+	 * @param callback
 	 * @param mProgressCallback
 	 */
 	public UDRequest(String localRoute, String remoteRoute,
-			String matchIndicator, UDCallback mDownloadCallback,
+			String matchIndicator, UDCallback callback,
 			ProgressCallback mProgressCallback)
 	{
 		super();
 		this.localRoute = localRoute;
 		this.remoteRoute = remoteRoute;
 		this.matchIndicator = matchIndicator;
-		this.mDownloadCallback = mDownloadCallback;
+		this.callback = callback;
 		this.mProgressCallback = mProgressCallback;
 	}
 
@@ -78,16 +78,16 @@ public class UDRequest
 	 * @param localRoute
 	 * @param remoteRoute
 	 * @param matchIndicator
-	 * @param mDownloadCallback
+	 * @param callback
 	 */
 	public UDRequest(String localRoute, String remoteRoute,
-			String matchIndicator, UDCallback mDownloadCallback)
+			String matchIndicator, UDCallback callback)
 	{
 		super();
 		this.localRoute = localRoute;
 		this.remoteRoute = remoteRoute;
 		this.matchIndicator = matchIndicator;
-		this.mDownloadCallback = mDownloadCallback;
+		this.callback = callback;
 	}
 
 	public String getLocalRoute()
@@ -107,7 +107,7 @@ public class UDRequest
 
 	public UDCallback getmDownloadCallback()
 	{
-		return mDownloadCallback;
+		return callback;
 	}
 
 	public ProgressCallback getmProgressCallback()
@@ -130,9 +130,9 @@ public class UDRequest
 	 */
 	public void handleCallback()
 	{
-		if (null != mDownloadCallback)
+		if (null != callback)
 		{
-			mDownloadCallback.callback(matchIndicator, downloadResult);
+			callback.callback(matchIndicator, downloadResult);
 		}
 	}
 
@@ -141,7 +141,7 @@ public class UDRequest
 	 */
 	public synchronized void cancelRequest()
 	{
-		mDownloadCallback = null;
+		callback = null;
 		mProgressCallback = null;
 		isCancelled = true;
 	}

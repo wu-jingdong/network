@@ -33,6 +33,8 @@
         </activity>
         <activity android:name=".business.picture.DownloadPictureActivity" >
         </activity>
+        <activity android:name=".business.picture.UploadPictureActivity" >
+        </activity>
     </application>
 
 </manifest>

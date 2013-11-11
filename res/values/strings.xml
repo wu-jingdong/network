@@ -10,6 +10,7 @@
         <item>发送普通消息</item>
         <item>发送音频消息</item>
         <item>图片下载</item>
+        <item>图片上传</item>
     </string-array>
 
 </resources>
