@@ -41,6 +41,8 @@ public class DownloadPictureActivity extends BaseActivity implements
 
 	private String matchIndicator;
 
+	private String localRoute;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -60,6 +62,7 @@ public class DownloadPictureActivity extends BaseActivity implements
 	 */
 	private void download()
 	{
+
 		String remoteRoute = editUrl.getText().toString();
 		if (TextUtils.isEmpty(remoteRoute))
 		{
@@ -71,12 +74,18 @@ public class DownloadPictureActivity extends BaseActivity implements
 			return;
 		}
 
+		localRoute = FileUtil.appendWithImg(remoteRoute.substring(idx + 1));
+
+		// set bitmap via local cache
+		if (setBitmap(imgPreview, getScreenWidth(), false, localRoute))
+		{
+			return;
+		}
+
+		// download from internet
 		btnDownload.setEnabled(false);
 		progress.setVisibility(View.VISIBLE);
 		progress.setProgress(0);
-		
-		String localRoute = FileUtil.appendWithImg(remoteRoute
-				.substring(idx + 1));
 		matchIndicator = String.valueOf(System.currentTimeMillis());
 		UDRequest request = new UDRequest(localRoute, remoteRoute,
 				matchIndicator, this, this);
@@ -104,15 +113,18 @@ public class DownloadPictureActivity extends BaseActivity implements
 	@Override
 	public void callback(String matchIndicator, int result)
 	{
-		this.progress.setVisibility(View.GONE);
-		btnDownload.setEnabled(true);
-		if (result == 0)
+		if (this.matchIndicator.equals(matchIndicator))
 		{
-			imgPreview.setImageResource(R.drawable.ic_launcher);
-		} else
-		{
-			Toast.makeText(getBaseContext(), "Download Error",
-					Toast.LENGTH_SHORT).show();
+			this.progress.setVisibility(View.GONE);
+			btnDownload.setEnabled(true);
+			if (result == 0)
+			{
+				setBitmap(imgPreview, getScreenWidth(), false, localRoute);
+			} else
+			{
+				Toast.makeText(getBaseContext(), "Download Error",
+						Toast.LENGTH_SHORT).show();
+			}
 		}
 	}
 }
