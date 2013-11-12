@@ -104,11 +104,6 @@ public class HttpRequest
 		return requestContent;
 	}
 
-	protected byte[] getResponseContent()
-	{
-		return responseContent;
-	}
-
 	/**
 	 * 取消请求
 	 */

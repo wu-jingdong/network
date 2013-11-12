@@ -35,6 +35,8 @@
         </activity>
         <activity android:name=".business.picture.UploadPictureActivity" >
         </activity>
+        <activity android:name=".business.normal.HttpActivity" >
+        </activity>
     </application>
 
 </manifest>
