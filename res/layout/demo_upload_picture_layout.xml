@@ -17,22 +17,23 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView1"
         android:layout_below="@+id/textView1"
-        android:ems="10" />
+        android:ems="10"
+        android:text="http://192.168.1.150:8080/file/upLoad?ft=1&amp;rt=upload" />
 
     <ImageView
         android:id="@+id/img_preview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/edit_upload_url"
-        android:layout_below="@+id/edit_upload_url"
+        android:layout_alignLeft="@+id/progress"
+        android:layout_below="@+id/progress"
         android:layout_marginTop="16dp" />
 
     <Button
         android:id="@+id/btn_album"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/img_preview"
-        android:layout_below="@+id/img_preview"
+        android:layout_alignLeft="@+id/edit_upload_url"
+        android:layout_below="@+id/edit_upload_url"
         android:layout_marginTop="18dp"
         android:text="Album" />
 
@@ -40,8 +41,8 @@
         android:id="@+id/btn_upload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/btn_album"
-        android:layout_below="@+id/btn_album"
+        android:layout_alignLeft="@+id/btn_camera"
+        android:layout_below="@+id/btn_camera"
         android:layout_marginTop="18dp"
         android:text="Upload" />
 
@@ -54,5 +55,14 @@
         android:layout_below="@+id/btn_upload"
         android:layout_centerVertical="true"
         android:layout_marginTop="18dp" />
+
+    <Button
+        android:id="@+id/btn_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btn_album"
+        android:layout_below="@+id/btn_album"
+        android:layout_marginTop="18dp"
+        android:text="Camera" />
 
 </RelativeLayout>

@@ -20,6 +20,7 @@ public class BaseActivity extends Activity
 		return (App) getApplication();
 	}
 
+	@SuppressWarnings("deprecation")
 	protected int getScreenWidth()
 	{
 		return getWindowManager().getDefaultDisplay().getWidth();

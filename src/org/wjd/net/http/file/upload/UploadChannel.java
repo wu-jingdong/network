@@ -109,7 +109,8 @@ public class UploadChannel extends UDChannel
 			/* FileInputStream */
 			fis = new FileInputStream(FileUtil.newInstance().getFile(
 					request.getLocalRoute(), false));
-
+			dos.writeBytes("Content-Length:" + fis.available());
+			
 			/* 1024bytes */
 			byte[] buffer = new byte[1024];
 
