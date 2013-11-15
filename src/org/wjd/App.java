@@ -43,6 +43,7 @@ public class App extends Application
 		if (null != cProxy)
 		{
 			cProxy.unInit();
+			cProxy = null;
 		}
 		Process.killProcess(Process.myPid());
 	}
