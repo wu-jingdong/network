@@ -1,12 +1,10 @@
 package org.wjd.net.http.conn;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -18,7 +16,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
-import org.wjd.net.common.Loger;
+import org.apache.http.util.EntityUtils;
 import org.wjd.net.http.conn.HttpRequest.METHOD;
 
 import android.os.Handler;
@@ -31,7 +29,7 @@ import android.text.TextUtils;
  * @author wjd
  * 
  */
-public abstract class HttpChannel extends Handler
+public class HttpChannel extends Handler
 {
 
 	/**
@@ -58,7 +56,7 @@ public abstract class HttpChannel extends Handler
 	 * 正在执行的请求任务
 	 */
 	protected List<HttpRequest> doQueue = new ArrayList<HttpRequest>();
-	
+
 	public HttpChannel(int poolSize)
 	{
 		POOL_SIZE = poolSize;
@@ -226,25 +224,15 @@ public abstract class HttpChannel extends Handler
 			boolean success = response.getStatusLine().getStatusCode() == 200;
 			if (success)
 			{
-				HttpEntity rspEntity = response.getEntity();
-				InputStream is = rspEntity.getContent();
-				int len = is.available();
-				if (len > 0)
-				{
-					byte[] buffer = new byte[len];
-					is.read(buffer);
-					Loger.print(this.getClass().getSimpleName(), new String(
-							buffer), Loger.INFO);
-					request.setResponseContent(buffer);
-				}
-				is.close();
+				request.setResponseContent(EntityUtils.toByteArray(response
+						.getEntity()));
 			}
 			if (success)
 			{
-				obtainMessage(WHAT_IO, request).sendToTarget();
+				obtainMessage(WHAT_RESULT, request).sendToTarget();
 			} else
 			{
-				obtainMessage(WHAT_RESULT, request).sendToTarget();
+				obtainMessage(WHAT_IO, request).sendToTarget();
 			}
 		} catch (IOException e)
 		{
@@ -279,5 +267,17 @@ public abstract class HttpChannel extends Handler
 			}
 		}
 		super.handleMessage(msg);
+	}
+
+	public void release()
+	{
+		for (int i = 0; i < threads.size(); ++i)
+		{
+			threads.get(i).addflag = false;
+			synchronized (threads.get(i))
+			{
+				threads.get(i).notify();
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package org.wjd;
 
 import org.wjd.business.audio.AudioActivity;
+import org.wjd.business.normal.HttpActivity;
 import org.wjd.business.normal.NormalActivity;
 import org.wjd.business.picture.DownloadPictureActivity;
 import org.wjd.business.picture.UploadPictureActivity;
@@ -18,9 +19,9 @@ public class MainActivity extends BaseActivity
 
 	private ListView listDemos;
 
-	private Class<?>[] activitys = new Class[] { NormalActivity.class,
-			AudioActivity.class, DownloadPictureActivity.class,
-			UploadPictureActivity.class };
+	private Class<?>[] activitys = new Class[] { HttpActivity.class,
+			NormalActivity.class, AudioActivity.class,
+			DownloadPictureActivity.class, UploadPictureActivity.class };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
