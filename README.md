@@ -34,7 +34,7 @@ The file upload-download function under org.wjd.net.http.file package.
 
 Application framework
 -------------------------------------------
-![Framework Chart] (https://github.com/wu-jingdong/network/blob/master/framework.jpg)
+![Framework Chart] (https://github.com/wu-jingdong/network/blob/master/framework.jpg "Click to show framework chart")
 
 Developed By
 =============================================
