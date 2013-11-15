@@ -1,6 +1,7 @@
 Android Network Protocol Stack
 ======================================================
 Contains Udp Stack, Tcp Stack and Http Stack.
+A simple application framework.
 
 Udp Stack
 ---------------------------
@@ -31,6 +32,9 @@ MAX_SIZE indicate the max request that can be sent at the same time.
 
 The file upload-download function under org.wjd.net.http.file package.
 
+Application framework
+-------------------------------------------
+	![Framework Chart] (framework.jpg)
 
 Developed By
 =============================================
