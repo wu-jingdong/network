@@ -17,7 +17,7 @@ import android.os.Process;
 public class App extends Application
 {
 
-	public static final CHANNEL_TYPE CTYPE = CHANNEL_TYPE.TYPE_TCP;
+	public static final CHANNEL_TYPE CTYPE = CHANNEL_TYPE.TYPE_NORMAL_TCP;
 
 	private ChannelProxy cProxy;
 

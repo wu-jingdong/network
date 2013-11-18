@@ -4,6 +4,7 @@ import java.net.InetAddress;
 
 import org.wjd.net.tcp_udp.tcp.TcpChannel;
 import org.wjd.net.tcp_udp.tcp.TcpConnectHandler;
+import org.wjd.net.tcp_udp.tcp.TcpNormalChannel;
 import org.wjd.net.tcp_udp.udp.UdpChannel;
 
 /**
@@ -17,7 +18,7 @@ public class ChannelProxy
 
 	public enum CHANNEL_TYPE
 	{
-		TYPE_TCP, TYPE_UDP
+		TYPE_TCP, TYPE_UDP, TYPE_NORMAL_TCP
 	}
 
 	private BaseChannel channel;
@@ -36,6 +37,9 @@ public class ChannelProxy
 				break;
 			case TYPE_UDP:
 				channel = new UdpChannel();
+				break;
+			case TYPE_NORMAL_TCP:
+				channel = new TcpNormalChannel();
 				break;
 			default:
 				break;

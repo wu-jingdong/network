@@ -28,7 +28,7 @@ public class AudioActivity extends BaseActivity implements OnClickListener
 		findViewById(R.id.btn_audio_start).setOnClickListener(this);
 		findViewById(R.id.btn_audio_end).setOnClickListener(this);
 		editIp = (EditText) findViewById(R.id.edit_ip);
-		if (App.CTYPE == CHANNEL_TYPE.TYPE_TCP)
+		if (App.CTYPE != CHANNEL_TYPE.TYPE_UDP)
 		{
 			Toast.makeText(getBaseContext(), R.string.app_name,
 					Toast.LENGTH_SHORT).show();
