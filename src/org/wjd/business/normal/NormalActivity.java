@@ -1,14 +1,9 @@
 package org.wjd.business.normal;
 
-import org.wjd.App;
 import org.wjd.BaseActivity;
 import org.wjd.R;
 import org.wjd.business.Module;
-import org.wjd.net.server.Server;
-import org.wjd.net.server.TcpServer;
-import org.wjd.net.server.UdpServer;
 import org.wjd.net.tcp_udp.BaseMessage;
-import org.wjd.net.tcp_udp.ChannelProxy.CHANNEL_TYPE;
 import org.wjd.net.tcp_udp.NetErrorHandler;
 import org.wjd.net.tcp_udp.ResponseHandler;
 import org.wjd.net.tcp_udp.UnsyncRequest;
@@ -28,8 +23,6 @@ public class NormalActivity extends BaseActivity implements OnClickListener,
 
 	private TextView tvReceived;
 
-	private Server server;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -38,9 +31,6 @@ public class NormalActivity extends BaseActivity implements OnClickListener,
 		editContent = (EditText) findViewById(R.id.edit_content);
 		tvReceived = (TextView) findViewById(R.id.tv_received);
 		findViewById(R.id.btn_send).setOnClickListener(this);
-		server = (App.CTYPE == CHANNEL_TYPE.TYPE_UDP) ? new UdpServer()
-				: new TcpServer();
-		server.start();
 	}
 
 	/**
@@ -85,15 +75,5 @@ public class NormalActivity extends BaseActivity implements OnClickListener,
 	{
 		tvReceived.setText("Response:\n");
 		tvReceived.append("Network Error!");
-	}
-
-	@Override
-	protected void onDestroy()
-	{
-		super.onDestroy();
-		if (null != server)
-		{
-			server.stopThread();
-		}
 	}
 }
