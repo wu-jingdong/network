@@ -125,6 +125,11 @@ public class TcpNormalChannel extends BaseChannel
 			onConnectionStatusChanged(false);
 			return false;
 		}
+		if (length <= 0)
+		{
+			// ignore invalid packet
+			return true;
+		}
 		byte[] res = new byte[length];
 		System.arraycopy(src, 0, res, 0, res.length);
 		combainPacket(res);

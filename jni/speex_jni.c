@@ -1,3 +1,9 @@
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
+
 #include <jni.h>
 
 #include <string.h>
@@ -15,6 +21,7 @@ static SpeexBits ebits, dbits;
 void *enc_state;
 void *dec_state;
 SpeexPreprocessState *preprocess_state;
+
 jint JNICALL Java_org_wjd_speex_Speex_open(JNIEnv *env, jobject obj,
 		jint compression) {
 	int tmp;
@@ -108,3 +115,9 @@ void JNICALL Java_org_wjd_speex_Speex_close(JNIEnv *env, jobject obj) {
 	speex_decoder_destroy(dec_state);
 	speex_encoder_destroy(enc_state);
 }
+
+#ifdef __cplusplus
+
+extern "C" {
+
+#endif
