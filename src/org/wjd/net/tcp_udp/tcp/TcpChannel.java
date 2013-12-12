@@ -249,6 +249,7 @@ public class TcpChannel extends BaseChannel
 				buffer.flip();
 				buffer.get(container, length, count);
 				length += count;
+				buffer.clear();
 			}
 			if (length <= 0)
 			{
