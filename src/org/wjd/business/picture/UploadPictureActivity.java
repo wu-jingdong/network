@@ -56,7 +56,7 @@ public class UploadPictureActivity extends BaseActivity implements
 		findViewById(R.id.btn_upload).setOnClickListener(this);
 		findViewById(R.id.btn_album).setOnClickListener(this);
 		findViewById(R.id.btn_camera).setOnClickListener(this);
-		channel = UploadChannel.getInstance();
+		channel = new UploadChannel(3);
 	}
 
 	private void onAlbumClick()
@@ -170,5 +170,16 @@ public class UploadPictureActivity extends BaseActivity implements
 		Toast.makeText(getBaseContext(),
 				result == SUCCESS ? "Upload Success!" : "Upload Fail!",
 				Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		if (null != channel)
+		{
+			channel.release();
+			channel = null;
+		}
 	}
 }

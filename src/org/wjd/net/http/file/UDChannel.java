@@ -2,6 +2,8 @@ package org.wjd.net.http.file;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.wjd.net.http.file.UDChannel.Executor.ProgressHolder;
 
@@ -19,29 +21,19 @@ public abstract class UDChannel extends Handler
 {
 
 	/**
-	 * 默认的上传/下载线程数量
-	 */
-	private static final int POOL_SIZE = 2;
-
-	/**
-	 * 最大的上传/下载线程数量
-	 */
-	private static final int MAX_SIZE = 5;
-
-	/**
-	 * 上传/下载线程组
-	 */
-	private ArrayList<Executor> threads = new ArrayList<Executor>();
-
-	/**
 	 * 上传/下载请求队列
 	 */
 	private List<UDRequest> reqQueue = new ArrayList<UDRequest>();
 
 	/**
-	 * 正在执行的上传/下载任务
+	 * 线程池
 	 */
-	protected List<UDRequest> doQueue = new ArrayList<UDRequest>();
+	protected ExecutorService executors = null;
+
+	/**
+	 * 线程池大小
+	 */
+	protected int poolSize = 5;
 
 	/**
 	 * 发送上传/下载请求
@@ -50,19 +42,22 @@ public abstract class UDChannel extends Handler
 	 */
 	public synchronized void request(UDRequest request)
 	{
-
+		if (null == executors)
+		{
+			executors = Executors.newFixedThreadPool(poolSize);
+		}
 		if (TextUtils.isEmpty(request.getLocalRoute())
 				|| TextUtils.isEmpty(request.getRemoteRoute()))
 		{
 			return;
 		}
 
-		if (reqQueue.contains(request) || doQueue.contains(request))
+		if (reqQueue.contains(request))
 		{
 			return;
 		}
 		reqQueue.add(request);
-		executeThread();
+		executors.execute(new Executor());
 	}
 
 	/**
@@ -78,84 +73,21 @@ public abstract class UDChannel extends Handler
 		return ret;
 	}
 
-	/**
-	 * 启动发送线程，发送上传/下载请求
-	 */
-	private void executeThread()
+	public class Executor implements Runnable
 	{
-		int size = threads.size();
-		for (int i = 0; i < size; ++i)
-		{
-			synchronized (threads.get(i))
-			{
-				if (threads.get(i).waiting)
-				{
-					threads.get(i).notify();
-					return;
-				}
-			}
-		}
-		// 如果在线程池中没找到空闲的线程
-		if (size == MAX_SIZE)
-		{
-			// 线程池数量已饱和，此请求暂时等待
-			return;
-		}
-		// 生成新的线程
-		Executor th = new Executor("http thread " + size);
-		if (size < POOL_SIZE)
-		{
-			th.addflag = true;
-		}
-		threads.add(th);
-		th.start();
-	}
-
-	public class Executor extends Thread
-	{
-
-		/**
-		 * 标记线程是否为等待状态
-		 */
-		boolean waiting = false;
-
-		/**
-		 * 标记线程执行完上传/下载任务以后是否添加到线程池中
-		 */
-		boolean addflag = false;
-
-		public Executor()
-		{
-			super();
-		}
-
-		public Executor(String threadName)
-		{
-			super(threadName);
-		}
-
 		@Override
 		public void run()
 		{
-			do
+			UDRequest request = getRequest();
+			if (null == request)
 			{
-				execute(holder);
-				if (addflag)
-				{
-					synchronized (this)
-					{
-						try
-						{
-							waiting = true;
-							this.wait();
-						} catch (InterruptedException e)
-						{
-						}
-					}
-				}
-				waiting = false;
-			} while (addflag);
-			threads.remove(this);
+				return;
+			}
+			if (request.isCancelled())
+			{
+				return;
+			}
+			execute(holder, request);
 		}
 
 		private ProgressHolder holder = new ProgressHolder();
@@ -176,7 +108,7 @@ public abstract class UDChannel extends Handler
 		}
 	}
 
-	protected abstract void execute(ProgressHolder holder);
+	protected abstract void execute(ProgressHolder holder, UDRequest request);
 
 	protected static final int WHAT_PROGRESS = 1;
 
@@ -201,5 +133,14 @@ public abstract class UDChannel extends Handler
 			}
 		}
 		super.handleMessage(msg);
+	}
+
+	public void release()
+	{
+		if (null != executors)
+		{
+			executors.shutdown();
+			executors = null;
+		}
 	}
 }

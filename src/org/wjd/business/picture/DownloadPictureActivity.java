@@ -3,9 +3,9 @@ package org.wjd.business.picture;
 import org.wjd.BaseActivity;
 import org.wjd.R;
 import org.wjd.net.common.FileUtil;
+import org.wjd.net.http.file.UDChannel;
 import org.wjd.net.http.file.ProgressCallback;
 import org.wjd.net.http.file.UDCallback;
-import org.wjd.net.http.file.UDChannel;
 import org.wjd.net.http.file.UDRequest;
 import org.wjd.net.http.file.download.DownloadChannel;
 
@@ -54,7 +54,7 @@ public class DownloadPictureActivity extends BaseActivity implements
 		imgPreview = (ImageView) findViewById(R.id.img_preview);
 		progress = (ProgressBar) findViewById(R.id.progress);
 		progress.setVisibility(View.GONE);
-		downloadChannel = DownloadChannel.getInstance();
+		downloadChannel = new DownloadChannel(3);
 	}
 
 	/**
@@ -125,6 +125,16 @@ public class DownloadPictureActivity extends BaseActivity implements
 				Toast.makeText(getBaseContext(), "Download Error",
 						Toast.LENGTH_SHORT).show();
 			}
+		}
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		super.onDestroy();
+		if (null != downloadChannel)
+		{
+			downloadChannel.release();
 		}
 	}
 }

@@ -19,33 +19,14 @@ import org.wjd.net.http.file.UDRequest;
 public class UploadChannel extends UDChannel
 {
 
-	private static UploadChannel instance = null;
-
-	public synchronized static UploadChannel getInstance()
+	public UploadChannel(int poolSize)
 	{
-		if (null == instance)
-		{
-			instance = new UploadChannel();
-		}
-		return instance;
-	}
-
-	private UploadChannel()
-	{
+		super.poolSize = poolSize;
 	}
 
 	@Override
-	protected void execute(ProgressHolder holder)
+	protected void execute(ProgressHolder holder, UDRequest request)
 	{
-		UDRequest request = getRequest();
-		if (null == request)
-		{
-			return;
-		}
-		if (request.isCancelled())
-		{
-			return;
-		}
 		holder.indicator = request.getMatchIndicator();
 		holder.callback = request.getmProgressCallback();
 
@@ -110,7 +91,7 @@ public class UploadChannel extends UDChannel
 			fis = new FileInputStream(FileUtil.newInstance().getFile(
 					request.getLocalRoute(), false));
 			dos.writeBytes("Content-Length:" + fis.available());
-			
+
 			/* 1024bytes */
 			byte[] buffer = new byte[1024];
 

@@ -14,10 +14,10 @@ import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
 import org.wjd.net.common.FileUtil;
 import org.wjd.net.common.Loger;
-import org.wjd.net.http.file.UDCallback;
-import org.wjd.net.http.file.UDRequest;
 import org.wjd.net.http.file.UDChannel;
 import org.wjd.net.http.file.UDChannel.Executor.ProgressHolder;
+import org.wjd.net.http.file.UDCallback;
+import org.wjd.net.http.file.UDRequest;
 
 /**
  * 文件下载通道
@@ -28,34 +28,13 @@ import org.wjd.net.http.file.UDChannel.Executor.ProgressHolder;
 public class DownloadChannel extends UDChannel
 {
 
-	private static DownloadChannel instance = null;
-
-	public synchronized static UDChannel getInstance()
+	public DownloadChannel(int poolSize)
 	{
-		if (null == instance)
-		{
-			instance = new DownloadChannel();
-		}
-		return instance;
+		super.poolSize = poolSize;
 	}
 
-	private DownloadChannel()
+	protected void execute(ProgressHolder holder, UDRequest request)
 	{
-
-	}
-
-	protected void execute(ProgressHolder holder)
-	{
-		UDRequest request = getRequest();
-		if (null == request)
-		{
-			return;
-		}
-		if (request.isCancelled())
-		{
-			return;
-		}
-		doQueue.add(request);
 		HttpParams params = new BasicHttpParams();
 
 		// set timeout
@@ -94,7 +73,7 @@ public class DownloadChannel extends UDChannel
 			e.printStackTrace();
 		} finally
 		{
-			doQueue.remove(request);
+			// doQueue.remove(request);
 		}
 	}
 
