@@ -32,15 +32,15 @@ public class HttpActivity extends BaseActivity implements IOCallback,
 		setContentView(R.layout.demo_http_layout);
 		progress = (ProgressBar) findViewById(R.id.progress);
 		webView = (WebView) findViewById(R.id.webView);
-		channel = new HttpChannel(1);
+		channel = new HttpChannel(5);
 		getWebContent();
 	}
 
 	private void getWebContent()
 	{
 		timestamp = System.currentTimeMillis();
-		HttpRequest request = new HttpRequest(timestamp, "http://www.baidu.com", this,
-				this);
+		HttpRequest request = new HttpRequest(timestamp,
+				"http://www.baidu.com", this, this);
 		channel.request(request);
 	}
 

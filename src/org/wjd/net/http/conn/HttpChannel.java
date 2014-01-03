@@ -1,9 +1,10 @@
 package org.wjd.net.http.conn;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -33,33 +34,24 @@ public class HttpChannel extends Handler
 {
 
 	/**
-	 * 默认的请求线程数量
-	 */
-	private static int POOL_SIZE = 2;
-
-	/**
-	 * 最大的请求线程数量
-	 */
-	private static int MAX_SIZE = 5;
-
-	/**
-	 * 请求线程组
-	 */
-	private ArrayList<Executor> threads = new ArrayList<Executor>();
-
-	/**
 	 * 请求队列
 	 */
 	private List<HttpRequest> reqQueue = new ArrayList<HttpRequest>();
 
 	/**
-	 * 正在执行的请求任务
+	 * 线程池
 	 */
-	protected List<HttpRequest> doQueue = new ArrayList<HttpRequest>();
+	private ExecutorService executors = null;
 
+	/**
+	 * 构造方法
+	 * 
+	 * @param poolSize
+	 *            线程池大小
+	 */
 	public HttpChannel(int poolSize)
 	{
-		POOL_SIZE = poolSize;
+		executors = Executors.newFixedThreadPool(poolSize);
 	}
 
 	/**
@@ -73,9 +65,8 @@ public class HttpChannel extends Handler
 		{
 			return;
 		}
-
 		reqQueue.add(request);
-		executeThread();
+		executors.execute(new Executor());
 	}
 
 	/**
@@ -91,91 +82,12 @@ public class HttpChannel extends Handler
 		return ret;
 	}
 
-	/**
-	 * 启动发送线程，发送请求
-	 */
-	private void executeThread()
+	public class Executor implements Runnable
 	{
-		int size = threads.size();
-		for (int i = 0; i < size; ++i)
-		{
-			if (threads.get(i).waiting)
-			{
-				synchronized (threads.get(i))
-				{
-					threads.get(i).notify();
-				}
-				return;
-			}
-		}
-		// 如果在线程池中没找到空闲的线程
-		if (size == MAX_SIZE)
-		{
-			// 线程池数量已饱和，此暂时等待
-			return;
-		}
-		// 生成新的线程
-		Executor th = new Executor("http thread " + size);
-		if (size < POOL_SIZE)
-		{
-			th.addflag = true;
-		}
-		threads.add(th);
-		th.start();
-	}
-
-	public class Executor extends Thread
-	{
-
-		/**
-		 * 标记线程是否为等待状态
-		 */
-		boolean waiting = false;
-
-		/**
-		 * 标记线程执行完请求任务以后是否添加到线程池中
-		 */
-		boolean addflag = false;
-
-		public Executor()
-		{
-			super();
-		}
-
-		public Executor(String threadName)
-		{
-			super(threadName);
-		}
-
 		@Override
 		public void run()
 		{
-			do
-			{
-				try
-				{
-					Thread.sleep(1000l);
-				} catch (InterruptedException e1)
-				{
-					e1.printStackTrace();
-				}
-				execute();
-				if (addflag)
-				{
-					synchronized (this)
-					{
-						try
-						{
-							waiting = true;
-							this.wait();
-						} catch (InterruptedException e)
-						{
-						}
-					}
-				}
-				waiting = false;
-			} while (addflag);
-			threads.remove(this);
+			execute();
 		}
 	}
 
@@ -190,7 +102,6 @@ public class HttpChannel extends Handler
 		{
 			return;
 		}
-		doQueue.add(request);
 		HttpParams params = new BasicHttpParams();
 
 		// set timeout
@@ -234,13 +145,10 @@ public class HttpChannel extends Handler
 			{
 				obtainMessage(WHAT_IO, request).sendToTarget();
 			}
-		} catch (IOException e)
+		} catch (Exception e)
 		{
 			obtainMessage(WHAT_IO, request).sendToTarget();
 			e.printStackTrace();
-		} finally
-		{
-			doQueue.remove(request);
 		}
 	}
 
@@ -266,18 +174,17 @@ public class HttpChannel extends Handler
 				request.handleResponse();
 			}
 		}
-		super.handleMessage(msg);
 	}
 
+	/**
+	 * 释放线程池
+	 */
 	public void release()
 	{
-		for (int i = 0; i < threads.size(); ++i)
+		if (null != executors)
 		{
-			threads.get(i).addflag = false;
-			synchronized (threads.get(i))
-			{
-				threads.get(i).notify();
-			}
+			executors.shutdown();
+			executors = null;
 		}
 	}
 }
